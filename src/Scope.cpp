@@ -233,12 +233,13 @@ struct ScopeDisplay : TransparentWidget {
 		nvgResetScissor(vg);
 	}
 
-	void drawStats(NVGcontext *vg, Vec pos, const char *title, Stats *stats) {
+	void drawStats(NVGcontext *vg, Vec pos, const char *title, Stats *stats, NVGcolor color) {
 		nvgFontSize(vg, 13);
 		nvgFontFaceId(vg, font->handle);
 		nvgTextLetterSpacing(vg, -2);
 
-		nvgFillColor(vg, nvgRGBA(0xff, 0xff, 0xff, 0x40));
+		//color.a = 0x90;
+		nvgFillColor(vg, color);
 		nvgText(vg, pos.x + 6, pos.y + 11, title, NULL);
 
 		nvgFillColor(vg, nvgRGBA(0xff, 0xff, 0xff, 0x80));
@@ -264,6 +265,23 @@ struct ScopeDisplay : TransparentWidget {
 			valuesY[i] = (module->bufferY[j] + offsetY) * gainY / 10.0;
 		}
 
+		// Compute colors
+		NVGcolor xColor, yColor;
+		xColor = getPortColor(module->xPort);
+		yColor = getPortColor(module->yPort);
+		if (memcmp(&xColor, &yColor, sizeof(xColor)) == 0 ) {
+			// if the colors are the same pick novel colors
+			NVGcolor tmp = xColor;
+			tmp.r = xColor.g;
+			tmp.g = xColor.b;
+			tmp.b = xColor.r;
+			xColor = tmp;
+			tmp.r = yColor.b;
+			tmp.g = yColor.r;
+			tmp.b = yColor.g;
+			yColor = tmp;
+		}
+
 		// Draw waveforms
 		if (module->lissajous) {
 			// X x Y
@@ -274,22 +292,6 @@ struct ScopeDisplay : TransparentWidget {
 		}
 		else {
 			// Y
-			NVGcolor xColor, yColor;
-			xColor = getPortColor(module->xPort);
-			yColor = getPortColor(module->yPort);
-			if (memcmp(&xColor, &yColor, sizeof(xColor)) == 0 ) {
-				// if the colors are the same pick novel colors
-				NVGcolor tmp = xColor;
-				tmp.r = xColor.g;
-				tmp.g = xColor.b;
-				tmp.b = xColor.r;
-				xColor = tmp;
-				tmp.r = yColor.b;
-				tmp.g = yColor.r;
-				tmp.b = yColor.g;
-				yColor = tmp;
-			}
-
 			if (module->inputs[Scope::Y_INPUT].active) {
 				nvgStrokeColor(vg, yColor);
 				drawWaveform(vg, valuesY, NULL);
@@ -311,8 +313,16 @@ struct ScopeDisplay : TransparentWidget {
 			statsX.calculate(module->bufferX);
 			statsY.calculate(module->bufferY);
 		}
-		drawStats(vg, Vec(0, 0), "X", &statsX);
-		drawStats(vg, Vec(0, box.size.y - 15), "Y", &statsY);
+
+		NVGcolor statsColor = nvgRGBA(0xff, 0xff, 0xff, 0x40);
+		if (!module->inputs[Scope::X_INPUT].active) {
+			xColor = statsColor;
+		}
+		if (!module->inputs[Scope::Y_INPUT].active) {
+			yColor = statsColor;
+		}
+		drawStats(vg, Vec(0, 0), "X", &statsX, xColor);
+		drawStats(vg, Vec(0, box.size.y - 15), "Y", &statsY, yColor);
 	}
 
 	NVGcolor getPortColor(Port* port) {
