@@ -1,15 +1,9 @@
 SLUG = Fundamental
-VERSION = 0.5.1
+VERSION = 0.6.0dev
 
-SOURCES = $(wildcard src/*.cpp)
+SOURCES += $(wildcard src/*.cpp)
+
+DISTRIBUTABLES += $(wildcard LICENSE*) res
 
 
 include ../../plugin.mk
-
-
-dist: all
-	mkdir -p dist/$(SLUG)
-	cp LICENSE* dist/$(SLUG)/
-	cp $(TARGET) dist/$(SLUG)/
-	cp -R res dist/$(SLUG)/
-	cd dist && zip -5 -r $(SLUG)-$(VERSION)-$(ARCH).zip $(SLUG)
