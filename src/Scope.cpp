@@ -2,8 +2,10 @@
 #ifdef PQ_VERSION
 #include "PQ.hpp"
 #include "Common/Branding.hpp"
+#define FONT "res/fonts/LessPerfectDOSVGA.ttf"
 #else
 #include "Fundamental.hpp"
+#define FONT "res/fonts/Sudo.ttf"
 #endif
 #include "dsp/digital.hpp"
 
