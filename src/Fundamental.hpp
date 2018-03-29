@@ -22,5 +22,3 @@ extern Model *modelScope;
 extern Model *modelSEQ3;
 extern Model *modelSequentialSwitch1;
 extern Model *modelSequentialSwitch2;
-
-
