@@ -3,9 +3,13 @@
 #include "PQ.hpp"
 #include "Common/Branding.hpp"
 #define FONT "res/fonts/LessPerfectDOSVGA.ttf"
+#define LETTER_SPACING -1.25
+#define FONT_SIZE 12
 #else
 #include "Fundamental.hpp"
 #define FONT "res/fonts/Sudo.ttf"
+#define LETTER_SPACING -2
+#define FONT_SIZE 13
 #endif
 #include "dsp/digital.hpp"
 
@@ -163,7 +167,7 @@ struct ScopeDisplay : TransparentWidget {
 	Stats statsX, statsY;
 
 	ScopeDisplay() {
-		font = Font::load(assetPlugin(plugin, "res/fonts/Sudo.ttf"));
+		font = Font::load(assetPlugin(plugin, FONT));
 	}
 
 	void drawWaveform(NVGcontext *vg, float *valuesX, float *valuesY) {
@@ -239,9 +243,9 @@ struct ScopeDisplay : TransparentWidget {
 	}
 
 	void drawStats(NVGcontext *vg, Vec pos, const char *title, Stats *stats, NVGcolor color) {
-		nvgFontSize(vg, 13);
+		nvgFontSize(vg, FONT_SIZE);
 		nvgFontFaceId(vg, font->handle);
-		nvgTextLetterSpacing(vg, -2);
+		nvgTextLetterSpacing(vg, LETTER_SPACING);
 
 		//color.a = 0x90;
 		nvgFillColor(vg, color);
