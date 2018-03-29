@@ -252,6 +252,8 @@ struct ScopeDisplay : TransparentWidget {
 	}
 
 	void draw(NVGcontext *vg) override {
+		assert(module->xPort);
+		assert(module->yPort);
 		float gainX = powf(2.0f, roundf(module->params[Scope::X_SCALE_PARAM].value));
 		float gainY = powf(2.0f, roundf(module->params[Scope::Y_SCALE_PARAM].value));
 		float offsetX = module->params[Scope::X_POS_PARAM].value;
@@ -367,8 +369,11 @@ ScopeWidget::ScopeWidget(Scope *module) : ModuleWidget(module) {
 	addParam(ParamWidget::create<RoundBlackKnob>(Vec(153, 209), module, Scope::TRIG_PARAM, -10.0f, 10.0f, 0.0f));
 	addParam(ParamWidget::create<CKD6>(Vec(152, 262), module, Scope::EXTERNAL_PARAM, 0.0f, 1.0f, 0.0f));
 
-	addInput(Port::create<PJ301MPort>(Vec(17, 319), Port::INPUT, module, Scope::X_INPUT));
-	addInput(Port::create<PJ301MPort>(Vec(63, 319), Port::INPUT, module, Scope::Y_INPUT));
+	module->xPort = dynamic_cast<Port*>(Port::create<PJ301MPort>(Vec(17, 319), Port::INPUT, module, Scope::X_INPUT));
+	addInput(module->xPort);
+	module->yPort = dynamic_cast<Port*>(Port::create<PJ301MPort>(Vec(63, 319), Port::INPUT, module, Scope::Y_INPUT));
+	addInput(module->yPort);
+
 	addInput(Port::create<PJ301MPort>(Vec(154, 319), Port::INPUT, module, Scope::TRIG_INPUT));
 
 	addChild(ModuleLightWidget::create<SmallLight<GreenLight>>(Vec(104, 251), module, Scope::PLOT_LIGHT));
