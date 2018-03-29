@@ -1,7 +1,11 @@
 #include <string.h>
+#ifdef PQ_VERSION
+#include "PQ.hpp"
+#include "Common/Branding.hpp"
+#else
 #include "Fundamental.hpp"
+#endif
 #include "dsp/digital.hpp"
-
 
 #define BUFFER_SIZE 512
 
@@ -374,4 +378,8 @@ ScopeWidget::ScopeWidget(Scope *module) : ModuleWidget(module) {
 }
 
 
+#ifdef PQ_VERSION
 Model *modelScope = Model::create<Scope, ScopeWidget>("Pulsum Quadratum", "Scope", "Color Scope", VISUAL_TAG);
+#else
+Model *modelScope = Model::create<Scope, ScopeWidget>("Pulsum Quadratum", "GenericScope", "Generic Color Scope", VISUAL_TAG);
+#endif
